@@ -2,11 +2,10 @@ const x = document.querySelector("#playground");
 const playground = x.getContext("2d");
 const gameover = document.querySelector("#gameover");
 const startagain = document.querySelector("#startagain");
-const score = document.querySelector("#score");
 const bestscore = document.querySelector("#bestscore");
+const score = document.querySelector("#score");
 score.innerHTML = 0;
 
-let direction;
 let stillAlive = true;
 
 //background
@@ -46,7 +45,47 @@ function clearOldSnake() {
   }
 }
 
-//remove the last pair of coordinates (snake's tail) from the array,
+// configure direction
+let direction;
+window.addEventListener("keydown", (event) => {
+  switch (event.key) {
+    case "ArrowUp":
+      if (direction !== "Down") {
+        direction = "Up";
+        console.log(direction);
+      }
+      break;
+
+    case "ArrowDown":
+      if (direction !== "Up") {
+        direction = "Down";
+        console.log(direction);
+      }
+      break;
+
+    case "ArrowRight":
+      if (direction !== "Left") {
+        direction = "Right";
+        console.log(direction);
+      }
+      break;
+
+    case "ArrowLeft":
+      if (direction !== "Right") {
+        direction = "Left";
+        console.log(direction);
+      }
+      break;
+
+    case "Enter":
+      if (gameover.style.display === "block") {
+        location.reload();
+      }
+  }
+});
+
+//first check snake going which direction
+//then remove the last pair of coordinates (snake's tail) from the array
 //then add  a pair at the begginning (snake's head)
 // run every 50 milliseconds if stillAlive === true
 function changeDirection() {
@@ -221,58 +260,19 @@ function gameOverHitSelf() {
     }
   }
 }
-bestscore.innerHTML = localStorage.getItem("BestScore");
 
+clearOldSnake();
+changeDirection();
+newSnake();
+
+//store best score
+bestscore.innerHTML = localStorage.getItem("BestScore");
 function setBestScore() {
   if (score.innerHTML > localStorage.getItem("BestScore")) {
     localStorage.setItem("BestScore", Number(score.innerHTML));
   }
 }
 
-window.addEventListener("click", () => {
-  localStorage.clear();
-});
-
-window.addEventListener("keydown", (event) => {
-  switch (event.key) {
-    case "ArrowUp":
-      if (direction !== "Down") {
-        direction = "Up";
-        console.log(direction);
-      }
-      break;
-
-    case "ArrowDown":
-      if (direction !== "Up") {
-        direction = "Down";
-        console.log(direction);
-      }
-      break;
-
-    case "ArrowRight":
-      if (direction !== "Left") {
-        direction = "Right";
-        console.log(direction);
-      }
-      break;
-
-    case "ArrowLeft":
-      if (direction !== "Right") {
-        direction = "Left";
-        console.log(direction);
-      }
-      break;
-    case "Enter":
-      if (gameover.style.display === "block") {
-        location.reload();
-      }
-  }
-});
-
 startagain.addEventListener("click", () => {
   location.reload();
 });
-
-clearOldSnake();
-changeDirection();
-newSnake();
