@@ -1,7 +1,7 @@
 #gameover {
   width: 510px;
   height: 510px;
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.423);
   color: white;
   position: absolute;
   top: 8px;

@@ -1,11 +1,13 @@
 const x = document.querySelector("#playground");
+const playground = x.getContext("2d");
 const gameover = document.querySelector("#gameover");
 const startagain = document.querySelector("#startagain");
 const score = document.querySelector("#score");
+const bestscore = document.querySelector("#bestscore");
 score.innerHTML = 0;
 
-const playground = x.getContext("2d");
 let direction;
+let stillAlive = true;
 
 //background
 playground.fillStyle = "rgb(250, 215, 143)";
@@ -31,14 +33,22 @@ let appleY = 100;
 playground.fillStyle = "red";
 playground.fillRect(appleX, appleY, 10, 10);
 
+//fill the last block of the snake with the playground color
+//run every 50 milliseconds if stillAlive === true
 function clearOldSnake() {
   playground.fillStyle = "rgb(250, 215, 143)";
   playground.fillRect(snake[0].x, snake[0].y, 10, 10);
-  setTimeout(function () {
-    clearOldSnake();
-  }, 40);
+
+  if (stillAlive) {
+    setTimeout(function () {
+      clearOldSnake();
+    }, 50);
+  }
 }
 
+//remove the last pair of coordinates (snake's tail) from the array,
+//then add  a pair at the begginning (snake's head)
+// run every 50 milliseconds if stillAlive === true
 function changeDirection() {
   switch (direction) {
     case "Right":
@@ -72,11 +82,16 @@ function changeDirection() {
         y: snake[snake.length - 1].y + 10,
       });
   }
-  setTimeout(function () {
-    changeDirection();
-  }, 40);
+
+  if (stillAlive) {
+    setTimeout(function () {
+      changeDirection();
+    }, 50);
+  }
 }
 
+//fill newly added snake's head
+// run every 50 milliseconds if stillAlive === true
 function newSnake() {
   playground.fillStyle = "darkgreen";
   playground.fillRect(
@@ -85,10 +100,12 @@ function newSnake() {
     10,
     10
   );
-  // console.log(snake);
-  setTimeout(function () {
-    newSnake();
-  }, 40);
+
+  if (stillAlive) {
+    setTimeout(function () {
+      newSnake();
+    }, 50);
+  }
 
   appleEaten();
   gameOverOutOfPlayground();
@@ -103,6 +120,7 @@ const appleCoordinates = [
   480, 490, 500,
 ];
 
+//check if snake's head coordinates === apple's
 function appleEaten() {
   if (
     snake[snake.length - 1].x === appleX &&
@@ -114,12 +132,13 @@ function appleEaten() {
   }
 }
 
+//check if apple coordinates === any of snake coordinates
+//if true, run this function again to check again
+//if false, fill the apple
 function changeApplePosition() {
   appleX = appleCoordinates[Math.floor(Math.random() * 51)];
   appleY = appleCoordinates[Math.floor(Math.random() * 51)];
 
-  //check if apple coordinates === any of snake coordinates
-  //if true, run this function again to check again
   for (let i = 0; i < snake.length; i++) {
     if (snake[i].x === appleX && snake[i].y === appleY) {
       changeApplePosition();
@@ -131,32 +150,40 @@ function changeApplePosition() {
   playground.fillRect(appleX, appleY, 10, 10);
 }
 
+//add three blocks at the tail each time
 function addSnake() {
   if (snake[0].x < snake[1].x && snake[0].y === snake[1].y) {
     snake.unshift(
       { x: snake[0].x - 10, y: snake[0].y },
-      { x: snake[1].x - 10, y: snake[1].y }
+      { x: snake[1].x - 10, y: snake[1].y },
+      { x: snake[2].x - 10, y: snake[2].y }
     );
   } else if (snake[0].x > snake[1].x && snake[0].y === snake[1].y) {
     snake.unshift(
       { x: snake[0].x + 10, y: snake[0].y },
-      { x: snake[1].x + 10, y: snake[1].y }
+      { x: snake[1].x + 10, y: snake[1].y },
+      { x: snake[2].x + 10, y: snake[2].y }
     );
   } else if (snake[0].x === snake[1].x && snake[0].y < snake[1].y) {
     snake.unshift(
       { x: snake[0].x, y: snake[0].y - 10 },
-      { x: snake[1].x, y: snake[1].y - 10 }
+      { x: snake[1].x, y: snake[1].y - 10 },
+      { x: snake[2].x, y: snake[2].y - 10 }
     );
   } else if (snake[0].x === snake[1].x && snake[0].y > snake[1].y) {
     snake.unshift(
       { x: snake[0].x, y: snake[0].y + 10 },
-      { x: snake[1].x, y: snake[1].y + 10 }
+      { x: snake[1].x, y: snake[1].y + 10 },
+      { x: snake[2].x, y: snake[2].y + 10 }
     );
   }
 }
 
 function addScore() {
   score.innerHTML++;
+  if (Number(score.innerHTML) > Number(bestscore.innerHTML)) {
+    bestscore.innerHTML++;
+  }
 }
 
 //snake goes out of playgorund
@@ -168,10 +195,12 @@ function gameOverOutOfPlayground() {
     snake[snake.length - 1].y > 500
   ) {
     gameover.style.display = "block";
+    stillAlive = false;
+    setBestScore();
   }
 }
 
-//snake hits itself
+//check if snake's head coordinates === any of the body
 function gameOverHitSelf() {
   for (let i = 0; i < snake.length - 1; i++) {
     if (
@@ -179,9 +208,30 @@ function gameOverHitSelf() {
       snake[i].y === snake[snake.length - 1].y
     ) {
       gameover.style.display = "block";
+      stillAlive = false;
+      setBestScore();
+
+      playground.fillStyle = "Purple";
+      playground.fillRect(
+        snake[snake.length - 1].x,
+        snake[snake.length - 1].y,
+        10,
+        10
+      );
     }
   }
 }
+bestscore.innerHTML = localStorage.getItem("BestScore");
+
+function setBestScore() {
+  if (score.innerHTML > localStorage.getItem("BestScore")) {
+    localStorage.setItem("BestScore", Number(score.innerHTML));
+  }
+}
+
+window.addEventListener("click", () => {
+  localStorage.clear();
+});
 
 window.addEventListener("keydown", (event) => {
   switch (event.key) {
