@@ -36,7 +36,7 @@ function clearOldSnake() {
   playground.fillRect(snake[0].x, snake[0].y, 10, 10);
   setTimeout(function () {
     clearOldSnake();
-  }, 60);
+  }, 20);
 }
 
 function changeDirection() {
@@ -74,7 +74,7 @@ function changeDirection() {
   }
   setTimeout(function () {
     changeDirection();
-  }, 60);
+  }, 20);
 }
 
 function newSnake() {
@@ -88,7 +88,7 @@ function newSnake() {
   // console.log(snake);
   setTimeout(function () {
     newSnake();
-  }, 60);
+  }, 20);
 
   appleEaten();
   gameOverOutOfPlayground();
