@@ -261,14 +261,10 @@ function gameOverHitSelf() {
   }
 }
 
-clearOldSnake();
-changeDirection();
-newSnake();
-
 //store best score
 bestscore.innerHTML = localStorage.getItem("BestScore");
 function setBestScore() {
-  if (score.innerHTML > localStorage.getItem("BestScore")) {
+  if (Number(score.innerHTML) > localStorage.getItem("BestScore")) {
     localStorage.setItem("BestScore", Number(score.innerHTML));
   }
 }
@@ -276,3 +272,7 @@ function setBestScore() {
 startagain.addEventListener("click", () => {
   location.reload();
 });
+
+clearOldSnake();
+changeDirection();
+newSnake();
