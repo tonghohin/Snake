@@ -1,6 +1,7 @@
 const x = document.querySelector("#playground");
 const playground = x.getContext("2d");
 const gameover = document.querySelector("#gameover");
+const gameovermessage = document.querySelector("#gameovermessage");
 const startagain = document.querySelector("#startagain");
 const bestscore = document.querySelector("#bestscore");
 const score = document.querySelector("#score");
@@ -266,6 +267,7 @@ bestscore.innerHTML = localStorage.getItem("BestScore");
 function setBestScore() {
   if (Number(score.innerHTML) > localStorage.getItem("BestScore")) {
     localStorage.setItem("BestScore", Number(score.innerHTML));
+    gameovermessage.innerHTML = "打死人咩";
   }
 }
 
