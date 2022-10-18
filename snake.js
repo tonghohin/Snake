@@ -268,7 +268,7 @@ bestscore.innerHTML = localStorage.getItem("BestScore");
 function setBestScore() {
   if (Number(score.innerHTML) > localStorage.getItem("BestScore")) {
     localStorage.setItem("BestScore", Number(score.innerHTML));
-    gameovermessage.innerHTML = "打死人咩";
+    gameovermessage.innerHTML = "NEW HIGH SCORE!";
   }
 }
 
